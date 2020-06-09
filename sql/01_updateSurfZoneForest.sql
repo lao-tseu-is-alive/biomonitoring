@@ -7,7 +7,7 @@ from (
         where grid_100m.id = 96
      ) as clipped
 where ST_Dimension(clipped.clipped_geom) = 2;
-
+UPDATE grid_100m G   SET surf_zone_forestiere =  null;
 WITH myForest AS (
 select clipped.idgrid,st_area(st_collect(clipped_geom)) ,
      round(st_area(st_collect(clipped_geom))) as surface,
@@ -29,6 +29,7 @@ WHERE G.id = myForest.idgrid;
 SELECT count(*) FROM  grid_100m WHERE surf_zone_forestiere IS NOT NULL;
 
 VACUUM ANALYSE grid_10m;
+UPDATE grid_10m G   SET surf_zone_forestiere =  null;
 WITH myForest AS (
 select clipped.idgrid,st_area(st_collect(clipped_geom)) ,
      round(st_area(st_collect(clipped_geom))) as surface,
