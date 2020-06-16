@@ -107,7 +107,7 @@ WHERE G.id = mygeom.id;
 
 -- DONC ON UTILISE  : generateBatchGridData.py pour generer deux batch...
 -- avec 2 batchs lancé en parallèle avec des UPDATE de 10 grilles à la fois:
--- batch02 MIN_ID = 9 MAX_ID = 7500
+-- batch01 MIN_ID = 9 MAX_ID = 7500
 --  grep WITH batch01.sql |wc -l    --> 750
 --  batch02 : MIN_ID = 7500 MAX_ID = 14500
 --  grep WITH batch02.sql |wc -l    --> 701
