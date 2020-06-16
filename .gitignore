@@ -130,13 +130,3 @@ dmypy.json
 
 #JetBrain project file
 .idea/
-
-#LAS and LAZ lidar files
-*.las
-*.laz
-
-#temp sql batch
-
-batch01.sql
-batch02.sql
-/qgis_project/BIOMONITORING_20200609.qgz
