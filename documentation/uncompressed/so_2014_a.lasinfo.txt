@@ -1,0 +1,95 @@
+---------------------------------------------------------
+  Header Summary
+---------------------------------------------------------
+
+  Version:                     1.2
+  Source ID:                   0
+  Reserved:                    0
+  Project ID/GUID:             '00000000-0000-0000-0000-000000000000'
+  System ID:                   'EXTRACTION'
+  Generating Software:         'Matlab / GNU Octave - LASwrite'
+  File Creation Day/Year:      146/2016
+  Header Byte Size             227
+  Data Offset:                 227
+  Header Padding:              0
+  Number Var. Length Records:  None
+  Point Data Format:           1
+  Number of Point Records:     2860844
+  Compressed:                  False
+  Number of Points by Return:  1896880 698797 225133 36893 2997 
+  Scale Factor X Y Z:          0.01000000000000 0.01000000000000 0.01000000000000
+  Offset X Y Z:                -0.00 -0.00 -0.00
+  Min X Y Z:                   602095.00 234150.00 733.12
+  Max X Y Z:                   602615.00 234475.00 2076.61
+  Spatial Reference:           None
+
+---------------------------------------------------------
+  Schema Summary
+---------------------------------------------------------
+  Point Format ID:             1
+  Number of dimensions:        13
+  Custom schema?:              false
+  Size in bytes:               28
+
+  Dimensions
+---------------------------------------------------------
+  'X'                            --  size: 32 offset: 0
+  'Y'                            --  size: 32 offset: 4
+  'Z'                            --  size: 32 offset: 8
+  'Intensity'                    --  size: 16 offset: 12
+  'Return Number'                --  size: 3 offset: 14
+  'Number of Returns'            --  size: 3 offset: 14
+  'Scan Direction'               --  size: 1 offset: 14
+  'Flightline Edge'              --  size: 1 offset: 14
+  'Classification'               --  size: 8 offset: 15
+  'Scan Angle Rank'              --  size: 8 offset: 16
+  'User Data'                    --  size: 8 offset: 17
+  'Point Source ID'              --  size: 16 offset: 18
+  'Time'                         --  size: 64 offset: 20
+  
+---------------------------------------------------------
+  Point Inspection Summary
+---------------------------------------------------------
+  Header Point Count: 2860844
+  Actual Point Count: 2860844
+
+  Minimum and Maximum Attributes (min,max)
+---------------------------------------------------------
+  Min X, Y, Z: 		602095.00, 234150.00, 733.12
+  Max X, Y, Z: 		602615.00, 234475.00, 2076.61
+  Bounding Box:		602095.00, 234150.00, 602615.00, 234475.00
+  Time:			121031.456001, 123902.924236
+  Return Number:	1, 7
+  Return Count:		1, 7
+  Flightline Edge:	0, 1
+  Intensity:		1, 295
+  Scan Direction Flag:	0, 0
+  Scan Angle Rank:	-30, 33
+  Classification:	2, 18
+  Point Source Id:	7115, 7118
+  User Data:		0, 0
+  Minimum Color (RGB):	0 0 0 
+  Maximum Color (RGB):	0 0 0 
+
+  Number of Points by Return
+---------------------------------------------------------
+	(1) 1896880	(2) 698797	(3) 225133	(4) 36893	(5) 2997	(6) 141	(7) 3
+
+  Number of Returns by Pulse
+---------------------------------------------------------
+	(1) 1198131	(2) 947084	(3) 564641	(4) 135815	(5) 14327	(6) 825	(7) 21
+
+  Point Classifications
+---------------------------------------------------------
+	1299417 Ground (2) 
+	1320 Low Point (noise) (7) 
+	548549 Overlap Points (12) 
+	189 Reserved for ASPRS Definition (16) 
+	69 Reserved for ASPRS Definition (17) 
+	1011300 Reserved for ASPRS Definition (18) 
+  -------------------------------------------------------
+  	0 withheld
+  	0 keypoint
+  	0 synthetic
+  -------------------------------------------------------
+

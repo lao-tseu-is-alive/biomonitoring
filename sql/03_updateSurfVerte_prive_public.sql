@@ -1,11 +1,30 @@
+/*
+ on utilise cs_verte comme couche de base il faudra la
+ on cree deux couches a partir de bf_parc_pol_1243-14-d :
+
+ bf_parcelle_publique_1243-14-d --> "type" LIKE 'DDPCOM' OR "type" LIKE 'PARCOM' OR "type" LIKE 'DP_COM'
+ bf_parcelle_privee_1243-14-d   --> "type" LIKE 'PAR'
+
+ ensuite on utilise vector/geoprocessing tools/intersect
+ pour obtenir intersection entre
+ cs_verte --> bf_parcelle_publique_1243-14-d ==> Cs_verte_publique
+ cs_verte --> bf_parcelle_privee_1243-14-d ==> Cs_verte_privee
+
+ on utilise topology checker pour verifier qu'il n'y a pas overlap sur ces couches et entre elles
+ on checke aussi que Cs_verte_publique et  Cs_verte_privee contiennet des geometries valides
+
+ ensuite on importe ces couches dans postgis pour
+ utiliser les requetes ci-apres pour alimenter les champs
+ surf_verte_public,surf_verte_prive dans les 3 tables grid_100m,grid_10m,grid_1m
+
+
+ */
+
+
 VACUUM ANALYSE grid_100m;
 VACUUM ANALYSE grid_10m;
 VACUUM ANALYSE grid_1m;
 
-SELECT COUNT(*), no_parc
-       FROM cs_verte_prive_no_parc_1243_14_d
-GROUP BY no_parc
-HAVING COUNT(*) > 1
 
 UPDATE grid_100m G  SET surf_verte_prive = null;
 UPDATE grid_100m G  SET surf_verte_public = null;
