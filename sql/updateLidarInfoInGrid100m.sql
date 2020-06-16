@@ -90,8 +90,8 @@ WITH mygeom AS (SELECT id, geom FROM grid_100m ORDER BY 1),
                WHERE st_contains(st_envelope(mygeom.geom), L.geom)
                GROUP BY L.c, mygeom.id)
 UPDATE grid_100m G
-SET n2_sol_non_permeable_2015=(SELECT num FROM myAgg WHERE c = 2 AND myAgg.id = G.id),
-    n3_sol_permeable_2015=(SELECT num FROM myAgg WHERE myAgg.c = 3 AND myAgg.id = G.id),
+SET n2_sol_2015=(SELECT num FROM myAgg WHERE c = 2 AND myAgg.id = G.id),
+    n3_vegetation_basse_2015=(SELECT num FROM myAgg WHERE myAgg.c = 3 AND myAgg.id = G.id),
     n5_vegetation_2015=(SELECT num FROM myAgg WHERE myAgg.c = 5 AND myAgg.id = G.id),
     n6_batiments_2015=(SELECT num FROM myAgg WHERE myAgg.c = 6 AND myAgg.id = G.id),
     n9_eau_2015=(SELECT num FROM myAgg WHERE myAgg.c = 9 AND myAgg.id = G.id),
