@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import math
-MIN_ID = 755000
-MAX_ID = 1455000
+MIN_ID = 1
+MAX_ID = 755000
 SQL = """
 WITH mygeom AS (SELECT id, geom FROM grid_1m WHERE id > {id1} AND  id < {id2} ORDER BY 1),
 myAgg AS (SELECT COUNT(*) as num, L.c, mygeom.id
