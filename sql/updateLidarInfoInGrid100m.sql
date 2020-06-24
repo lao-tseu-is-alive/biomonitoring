@@ -36,6 +36,7 @@ SELECT addgeometrycolumn('grid_10m', 'geom', 21781, 'POLYGON', 2);
 
 
 VACUUM ANALYSE l3d_1243_14_d;
+VACUUM ANALYSE lidar_2015;
 VACUUM ANALYSE lidar_2015_2536_1153;
 VACUUM ANALYSE lidar_2015_2537_1153;
 VACUUM ANALYSE lidar_2015_2538_1153;
@@ -47,11 +48,11 @@ WHERE st_contains(ST_MakeEnvelope(536875, 153000, 536975, 153100, 21781), geom)
 GROUP BY c;
 
 WITH mygeom AS (SELECT id, geom FROM grid_100m WHERE id < 4)
-SELECT COUNT(*) as num, L.c, mygeom.id
+SELECT COUNT(*) as num, min(z) as minZ, max(z) as maxZ,avg(z) as avgZ,  mygeom.id
 FROM l3d_1243_14_d L,
      mygeom
 WHERE st_contains(st_envelope(mygeom.geom), L.geom)
-GROUP BY L.c, mygeom.id;
+GROUP BY mygeom.id;
 --32 rows retrieved starting from 1 in 1 s 452 ms (execution: 1 s 427 ms, fetching: 25 ms)
 
 WITH mygeom AS (SELECT id, geom FROM grid_100m ORDER BY 1),
@@ -78,6 +79,21 @@ FROM myAgg,
 WHERE G.id = mygeom.id;
 -- [2020-05-28 15:37:43] 140 rows affected in 2 m 46 s 155 ms
 
+WITH mygeom AS (SELECT id, geom FROM grid_100m ORDER BY 1),
+     myAgg AS (SELECT COUNT(*) as num, min(z) as minZ, max(z) as maxZ,avg(z) as avgZ,  mygeom.id
+               FROM l3d_1243_14_d L,
+                    mygeom
+               WHERE st_contains(st_envelope(mygeom.geom), L.geom)
+               GROUP BY mygeom.id)
+UPDATE grid_100m G
+SET densite_lidar_2012=(SELECT num FROM myAgg WHERE myAgg.id = G.id),
+    altitude_min=(SELECT minZ FROM myAgg WHERE myAgg.id = G.id),
+    altitude_max=(SELECT maxZ FROM myAgg WHERE myAgg.id = G.id),
+    altitude_mean=(SELECT avgZ FROM myAgg WHERE myAgg.id = G.id)
+FROM myAgg,
+     mygeom
+WHERE G.id = mygeom.id;
+--[2020-06-23 14:38:13] 140 rows affected in 51 s 647 ms
 SELECT *
 FROM grid_100m
 WHERE main_lidar_category > 9;
@@ -106,7 +122,25 @@ FROM myAgg,
      mygeom
 WHERE G.id = mygeom.id;
 
-CREATE INDEX lidar_2015_geom_idx ON lidar_2015 USING gist (geom);
+WITH mygeom AS (SELECT id, geom FROM grid_100m ORDER BY 1),
+     myAgg AS (SELECT COUNT(*) as num,-- min(z) as minZ, max(z) as maxZ,avg(z) as avgZ,
+                        mygeom.id
+               FROM lidar_2015 L,
+                    mygeom
+               WHERE st_contains(st_envelope(mygeom.geom), L.geom)
+               GROUP BY mygeom.id)
+UPDATE grid_100m G
+SET densite_lidar_2015=(SELECT num FROM myAgg WHERE myAgg.id = G.id)
+    /*,
+    altitude_min=(SELECT minZ FROM myAgg WHERE myAgg.id = G.id),
+    altitude_max=(SELECT maxZ FROM myAgg WHERE myAgg.id = G.id),
+    altitude_mean=(SELECT avgZ FROM myAgg WHERE myAgg.id = G.id)
+
+     */
+FROM myAgg,
+     mygeom
+WHERE G.id = mygeom.id;
+--2020-06-23 14:40:32] 140 rows affected in 19 s 881 ms
 
 SELECT main_lidar_category,COUNT(*) as num
 FROM grid_100m

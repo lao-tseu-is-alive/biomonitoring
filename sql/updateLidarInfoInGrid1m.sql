@@ -36,6 +36,26 @@ WHERE G.id = mygeom.id;
 -- time psql -f batch02.sql biomonitoring (70001 rows affected)     real	9m8.380s
 -- soit ~10min avec 2 batchs en exec parallel
 
+
+SELECT count(*) FROM grid_1m WHERE grid_1m.densite_lidar_2012 IS Null;
+
+WITH mygeom AS (SELECT id, geom FROM grid_1m WHERE id > 0 AND  id < 10 ORDER BY 1),
+     myAgg AS (SELECT COUNT(*) as num, min(z) as minZ, max(z) as maxZ,avg(z) as avgZ,  mygeom.id
+               FROM l3d_1243_14_d L,
+                    mygeom
+               WHERE st_contains(st_envelope(mygeom.geom), L.geom)
+               GROUP BY mygeom.id)
+UPDATE grid_1m G
+SET densite_lidar_2012=(SELECT num FROM myAgg WHERE myAgg.id = G.id),
+    altitude_min=(SELECT minZ FROM myAgg WHERE myAgg.id = G.id),
+    altitude_max=(SELECT maxZ FROM myAgg WHERE myAgg.id = G.id),
+    altitude_mean=(SELECT avgZ FROM myAgg WHERE myAgg.id = G.id)
+FROM myAgg,
+     mygeom
+WHERE G.id = mygeom.id;
+
+
+--------------------------------------------------------------------------------------------
 -- ET MAINTENANT on traite les donnees 2015
 UPDATE grid_10m G
     SET
@@ -80,8 +100,10 @@ WHERE G.id = mygeom.id;
 
 
 -- on check si on a rien loupe
-select COUNT(*), MIN(id), MAX(id) FROM grid_1m WHERE main_lidar_category IS NULL ;
+select COUNT(*), MIN(id), MAX(id) FROM grid_1m WHERE densite_lidar_2012 > ;
 select COUNT(*), MIN(id), MAX(id) FROM grid_1m WHERE main_lidar_category_2015 IS NULL ;
-
+select MIN(densite_lidar_2012), avg(densite_lidar_2012), MAX(densite_lidar_2012),
+        MIN(densite_lidar_2015), avg(densite_lidar_2015), MAX(densite_lidar_2015)
+FROM grid_1m;
 
 

@@ -119,36 +119,36 @@ WITH mygeom AS (SELECT id, geom FROM grid_1m WHERE main_lidar_category IS NULL)
 ORDER BY mygeom.id
 ;
 DROP TABLE temp_nullgrid;
-WITH mygeom AS (SELECT id, geom FROM grid_1m WHERE main_lidar_category IS NULL),
+WITH mygeom AS (SELECT id, geom FROM grid_1m WHERE main_lidar_category_2015 IS NULL),
      -- avec les id de ces grilles ou on a pas de main_lidar_category
      -- on compte les valeurs distinctes de main_lidar_category autour
-     myagg AS (SELECT mygeom.id, a.main_lidar_category, count(*) as num
+     myagg AS (SELECT mygeom.id, a.main_lidar_category_2015, count(*) as num
                FROM grid_1m as a,
                     mygeom
                WHERE st_intersects((st_buffer(mygeom.geom, 0.00001)), a.geom)
-                 AND a.main_lidar_category IS NOT NULL
-               GROUP BY mygeom.id, a.main_lidar_category
+                 AND a.main_lidar_category_2015 IS NOT NULL
+               GROUP BY mygeom.id, a.main_lidar_category_2015, mygeom.id
                ORDER BY mygeom.id, num)
 SELECT mytopcategory.*
 INTO temp_nullgrid
 FROM ( -- et on retient la categorie qui est la plus representee autour du la grille manquante
          SELECT distinct myagg.id,
                          myagg.num,
-                         myagg.main_lidar_category,
+                         myagg.main_lidar_category_2015,
                          rank() OVER (
                              partition by myagg.id
-                             ORDER BY myagg.num DESC , myagg.main_lidar_category ASC
+                             ORDER BY myagg.num DESC , myagg.main_lidar_category_2015 ASC
                              )
          FROM myagg
          ORDER BY myagg.id) mytopcategory
 WHERE mytopcategory.rank < 2
 ORDER BY mytopcategory.id;
 ;
-
+SELECT COUNT(*) FROM temp_nullgrid
 -- on met a jour les quelques grilles avec main_lidar_category encore nulles
-WITH myTopValFromGridVoisines AS (SELECT id,main_lidar_category FROM temp_nullgrid)
+WITH myTopValFromGridVoisines AS (SELECT id,main_lidar_category_2015 FROM temp_nullgrid)
 UPDATE grid_1m G
-SET main_lidar_category = myTopValFromGridVoisines.main_lidar_category
+SET main_lidar_category_2015 = myTopValFromGridVoisines.main_lidar_category_2015
 FROM myTopValFromGridVoisines
 WHERE G.id = myTopValFromGridVoisines.id;
 

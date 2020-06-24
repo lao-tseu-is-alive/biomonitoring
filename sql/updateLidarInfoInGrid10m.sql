@@ -37,6 +37,7 @@ SELECT addgeometrycolumn('my_polygons', 'geom', 21781, 'POLYGON', 2);
 CREATE INDEX my_polygons_geom_idx ON my_polygons  USING gist(geom);
 
 VACUUM ANALYSE l3d_1243_14_d;
+VACUUM ANALYSE grid_10m;
 
 WITH mygeom AS (SELECT id, geom FROM grid_10m WHERE id < 4)
     SELECT COUNT(*) as num, L.c, mygeom.id
@@ -75,7 +76,24 @@ WHERE G.id = mygeom.id;
 --- TOUT LE BAZAR EST CALCULE EN :time psql -f batch02.sql biomonitoring
 -- real	0m38.841s user	0m0.106s sys	0m0.054s
 -- moins d'une minute pour TOUT !!!
+SELECT count(*) FROM grid_10m WHERE grid_10m.densite_lidar_2012 IS Null;
 
+WITH mygeom AS (SELECT id, geom FROM grid_10m WHERE id > 0 AND  id < 10 ORDER BY 1),
+     myAgg AS (SELECT COUNT(*) as num, min(z) as minZ, max(z) as maxZ,avg(z) as avgZ,  mygeom.id
+               FROM l3d_1243_14_d L,
+                    mygeom
+               WHERE st_contains(st_envelope(mygeom.geom), L.geom)
+               GROUP BY mygeom.id)
+UPDATE grid_10m G
+SET densite_lidar_2012=(SELECT num FROM myAgg WHERE myAgg.id = G.id),
+    altitude_min=(SELECT minZ FROM myAgg WHERE myAgg.id = G.id),
+    altitude_max=(SELECT maxZ FROM myAgg WHERE myAgg.id = G.id),
+    altitude_mean=(SELECT avgZ FROM myAgg WHERE myAgg.id = G.id)
+FROM myAgg,
+     mygeom
+WHERE G.id = mygeom.id;
+
+-------------------------------------------------------------------------
 -- ET MAINTENANT on traite les donnees 2015
 UPDATE grid_10m G
     SET
@@ -131,10 +149,19 @@ UPDATE grid_10m
         WHERE myAgg.id = G.id AND  myAgg.c < 10
         ORDER BY myAgg.num DESC LIMIT 1)
 FROM myAgg,mygeom
-WHERE id = mygeom.id
-;
+WHERE id = mygeom.id;
 
-
+WITH mygeom AS (SELECT id, geom FROM grid_10m WHERE id > 0 AND  id < 10 ORDER BY 1),
+     myAgg AS (SELECT COUNT(*) as num, mygeom.id
+               FROM lidar_2015 L,
+                    mygeom
+               WHERE st_contains(st_envelope(mygeom.geom), L.geom)
+               GROUP BY mygeom.id)
+UPDATE grid_10m G
+SET densite_lidar_2015=(SELECT num FROM myAgg WHERE myAgg.id = G.id)
+FROM myAgg,
+     mygeom
+WHERE G.id = mygeom.id;
 
 -- on check si on a rien loupe
 select MIN(id), MAX(id) FROM grid_10m
