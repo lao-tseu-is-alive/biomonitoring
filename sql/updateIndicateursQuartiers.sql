@@ -75,7 +75,8 @@ SET surf_permeable = (SELECT surf_permeable FROM myAggr),
     surf_verte_public = (SELECT surf_verte_public FROM myAggr),
     altitude_min = (SELECT altitude_min FROM myAggr),
     altitude_mean = (SELECT altitude_mean FROM myAggr),
-    altitude_max = (SELECT altitude_max FROM myAggr)
+    altitude_max = (SELECT altitude_max FROM myAggr),
+    surf_zone_forestiere = (SELECT surf_zone_forestiere FROM myAggr)
 FROM myAggr,myPoly
 WHERE Q.id = myPoly.id;
 
